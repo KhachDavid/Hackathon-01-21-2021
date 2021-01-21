@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %}Upload Page{% endblock %}
+
+
+{% block content %}
+    <div id="main-home">
+        <div class="main-home-container">
+        <h3>Looking for personalized music?</h3>
+            <h4>Start listening what you feel</h4>
+            <button class="main-home-button">
+                <a style="color:#000000; text-decoration:none" href ="{% url 'spotify-auth' %}">Launch Now </a>
+            </button>
+        </div>
+    </div>
+{% endblock %}

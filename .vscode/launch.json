@@ -1,0 +1,36 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "Python: Django",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}\\Image2Audio\\manage.py",
+            "stopOnEntry": true,
+            "justMyCode": false,
+            "args": [
+                "runserver",
+                "5000",
+            ],
+            "django": true
+        },
+                    
+        {
+            "name": "Python: Django",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}\\Image2Audio\\manage.py",
+            "console": "integratedTerminal",
+            "args": [
+                "runserver",
+                "5000",
+                "--noreload"
+            ],
+            "django": true
+        }
+    ]
+}
