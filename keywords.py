@@ -81,16 +81,5 @@ def get_dominant_color(image):
     color_thief = ColorThief(image)
     return color_thief.get_color(quality=1)
 
-# dog_keywords = get_keywords_from_image('./dog.jpg', 5)
-# print(dog_keywords)
-# print()
-# print(lemmatize(dog_keywords))
-# print(get_dominant_color('dog.jpg'))
-
-# megamind_keywords = get_keywords_from_url('https://img-www.tf-cdn.com/movie/2/megamind.jpeg?_v=20150925200307&fit=crop&crop=faces%20entropy&w=1200&h=630', 10)
-# print(megamind_keywords)
-# print()
-# print(lemmatize(megamind_keywords))
-# print(get_dominant_color('megamind.jpeg'))
 
 
