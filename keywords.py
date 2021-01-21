@@ -6,10 +6,14 @@ import os
 import nltk
 from colorthief import ColorThief
 from nltk.stem import WordNetLemmatizer
-nltk.download('all') 
+
+import Algorithmia
+
+#nltk.download('all') 
 
 client_id = ''
 client_secret = ''
+ALGORITHMIA_CLIENT_KEY = ""
 
 
 def get_keywords_from_url(url, num_keywords):
@@ -45,6 +49,7 @@ def get_keywords_from_image(image_name, num_keywords):
         info = requests.post('https://api.everypixel.com/v1/keywords', files=data, auth=(client_id, client_secret)).json()
 
     keywords = []
+    print(info)
     words = info['keywords']
     for word in words:
         keyword = word['keyword']
@@ -82,4 +87,21 @@ def get_dominant_color(image):
     return color_thief.get_color(quality=1)
 
 
+def get_emotion_from_url(url, numResults):
+    # Algorithmia client
+    client = Algorithmia.client(ALGORITHMIA_CLIENT_KEY)
 
+    # Format input
+    input = {
+        "image": url,
+        "numResults": numResults
+    }
+
+    # Analyze with Algorithmia's emotion recognition algorithm
+    algo = client.algo('deeplearning/EmotionRecognitionCNNMBP/0.1.2')
+    algo.set_options(timeout=300) # optional
+    print("Analyzing")
+    result = algo.pipe(input).result
+
+    print("Done!")
+    return result.get("results")
