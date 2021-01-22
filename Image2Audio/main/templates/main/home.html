@@ -4,26 +4,6 @@
 
 
 {% block content %}
-<<<<<<< HEAD
-    <div id="main-home">
-        <div class="main-home-container">
-        <h3>Looking for personalized music?</h3>
-            <h4>Start listening what you see</h4>
-            <button class="main-home-button">
-                <a style="color:#000000; text-decoration:none" href ="{% url 'spotify-auth' %}">Launch Now </a>
-            </button>
-
-            <form method="POST">
-                {% csrf_token %}
-                <input type="file" name="image" id="image" required>
-
-                <div class="p-t-10">
-                    <input type="submit" value="Submit">
-                </div>
-            </form>
-        </div>
-    </div>
-=======
                 <!--  HEADER  -->
             <header>
                 <div class="header-wrapper">
@@ -62,5 +42,4 @@
             </div>
 
         </div> <!-- END SONG SELECTION BOX -->
->>>>>>> 3b3806db01aad799c93246e3b3af67c23d7a6fca
 {% endblock %}
