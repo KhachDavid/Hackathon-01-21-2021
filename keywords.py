@@ -88,6 +88,13 @@ def get_dominant_color(image):
 
 
 def get_emotion_from_url(url, numResults):
+    '''
+    Determines the 'emotion' of a given image.
+
+    url = url of image
+    numResults = number of emotions to return
+    
+    '''
     # Algorithmia client
     client = Algorithmia.client(ALGORITHMIA_CLIENT_KEY)
 
