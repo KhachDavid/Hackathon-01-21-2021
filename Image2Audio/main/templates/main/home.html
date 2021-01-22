@@ -4,6 +4,7 @@
 
 
 {% block content %}
+<<<<<<< HEAD
     <div id="main-home">
         <div class="main-home-container">
         <h3>Looking for personalized music?</h3>
@@ -22,4 +23,44 @@
             </form>
         </div>
     </div>
+=======
+                <!--  HEADER  -->
+            <header>
+                <div class="header-wrapper">
+                    <div class="header-container">
+                    <span id="header-text">Image2Audio - Powered By</span><div class="header-logo"></div>
+                </div>
+            </header>
+
+
+        <!--  SONG SELECTION BOX  -->
+
+        <div class="song-selection-box">
+
+            <!-- SEARCH CONTAINER -->
+            <div class="search-wrapper">
+                <div class="search-container">
+                    <input type="search" name="input-search" id="input-search" placeholder="Add keywords">
+                    <button type="button" id="btn-search">Go!</button>
+                    Temp, for testing keyword search
+                </div>
+                <div class="choose-file-container">
+                    <input type="file" name="input-img" id="input-img" hidden="hidden"/>
+                    <button type="button" name="btn-input-img" id="btn-input-img">CHOOSE A FILE</button>
+                    <span id="text-input-img">No file chosen yet.</span>
+                </div>
+                <div class="upload-container"> <!-- upload will send image for processing to render playlist/song-->
+                    <input type="file" name="input-img" id="input-img" hidden="hidden"/>
+                    <button type="button" name="btn-upload" id="btn-upload" onclick="showResults()">PLAY MUSIC</button>
+                </div>
+            </div>
+
+            <!-- RESULTS SEARCH -->
+
+            <div class="container-results" id="container-results" style="display:none;"> 
+                Magic happens
+            </div>
+
+        </div> <!-- END SONG SELECTION BOX -->
+>>>>>>> 3b3806db01aad799c93246e3b3af67c23d7a6fca
 {% endblock %}

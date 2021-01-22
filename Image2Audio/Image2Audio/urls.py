@@ -21,6 +21,8 @@ from main import views as main_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main_views.home, name='home'),
+    path('login/', main_views.login, name='login'),
+    path('home/', main_views.home, name='home'), 
     path('auth/', include('spotify.urls')),
     path('callback/', spotify_views.callback, name='callback'),
 ]

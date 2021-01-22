@@ -27,3 +27,5 @@ def home(request):
     }
 
     return render(request, 'main/home.html', context)
+def login(request):
+    return render(request, 'main/login.html')
