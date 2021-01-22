@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Landing Page */
+
+section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background:  url("img/background_soundwave.jpg");;
+}
+
+.box {
+    position: relative;
+    padding: 50px;
+    width: 360px;
+    height: 480px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255,255,0.2);
+    border-radius: 10px;
+    box-shadow: 0 5px 35px rgba(0,0,0,0.2);
+}
+
+.box::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border-radius: 10px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%,rgba(255,255,255,0.1) 15%, transparent 50%, transparent 85%, rgba(255,255,255,0.3) 100%);
+}
+
+.box .form {
+    position: relative;
+    width: 100%;
+}
+
+.box .form h2 {
+    color: #FFFFFF;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+}
+
+.box .form .inputBox {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.box .form .inputBox input {
+    width: 10%;
+    outline: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    background:transparent;
+    padding: 10px 10px;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 300;
+    box-shadow: inset 0 0 25px rgba(0,0,0,0.2);
+}
+
+.icon {
+  padding: 10px;
+  background: dodgerblue;
+  color: white;
+  min-width: 50px;
+  text-align: center;
+}
+
+
+/* Home Page */
+
+header {
+  background-color: #000000; 
+  height: 60px;
+}
+
+header .header-wrapper {
+    min-width: inherit;
+    max-width: 1024px;
+    margin: 0 auto;
+}
+
+header .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    margin: 0 15px;
+    box-sizing: border-box;
+}
+
+header .header-logo {
+    background: url("img/spotify_icon_logo.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 25px;
+    box-sizing: border-box;
+}
+
+#header-text {
+    color: #FFFFFF;
+    text-align: left;
+}
+
+.song-selection-box{
+    position: absolute;
+    margin: 15px auto;
+    left: 40%;
+}
+
+#btn-input-img {
+    padding: 10px;
+    color: white;
+    background-color: #AAAAAA;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#btn-input-img:hover {
+    background-color: #CCCCCC;
+    color: #000000;
+}
+
+#text-input-img {
+    margin-left: 10px;
+    color: #AAAAAA;
+}
+
+#btn-upload {
+    padding: 10px;
+    color: white;
+    background-color: #3CB371;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#btn-upload:hover {
+    background-color: #00FA9A;
+    color: #000000;
+}
+
+.choose-file-container {
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 600;
+    font-size: 20;
+    cursor: pointer;
+    color: #AAAAAA;
+    border: 2px dashed  #3CB371;
+    border-radius: 10px;   
+}
+
+.upload-container {
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 600;
+    font-size: 20;
+    cursor: pointer;
+    color: #AAAAAA;
+    border-radius: 10px;   
+}
+
+/* only if using fancy upload
+
+.upload-container {
+    max-width: 250px;
+    height: 250px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 600;
+    font-size: 20;
+    cursor: pointer;
+    color: #AAAAAA;
+    border: 2px dashed  #3CB371;
+    border-radius: 10px;   
+}
+
+
+.drop-zone__thumb {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #CCCCCC;
+}
+
+.drop-zone--over {
+    border-style: solid;
+}
+
+.drop-zone__input {
+    display: none;
+}
+
+*/
+
