@@ -100,6 +100,7 @@ def callback(request):
         prof_pic = display_arr[0]['images'][0]['url']
     except:
         prof_pic = "/static/musicplayer/wine.png"
+
     # Get Audio Features
     tracks = []
     for i in range(len(list_of_songs)):
@@ -129,12 +130,8 @@ def callback(request):
                 except json.decoder.JSONDecodeError:
                     pass
 
-
     # Obtain Top Artists
-    
     artists = client.get_users_top_artists(auth_header=authorization_header, num_entities=10)
-    pass
-
 
     # audio_features['audio_features'][0]['danceability']
     # audio_features['audio_features'][0]['energy']
@@ -146,6 +143,8 @@ def callback(request):
     }
     return render(request, "main/spotify.html", context)
 
+
+"""
 def update_the_song(request):
     random_track = ''
     if request.method == 'POST':
@@ -181,3 +180,4 @@ def update_the_song(request):
             json.dumps({"nothing to see": "this isn't happening"}),
             content_type="application/json"
         )
+"""

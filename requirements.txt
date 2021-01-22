@@ -1,1 +1,1 @@
-django, requests
+django, requests, Image

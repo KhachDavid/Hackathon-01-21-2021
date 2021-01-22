@@ -7,10 +7,19 @@
     <div id="main-home">
         <div class="main-home-container">
         <h3>Looking for personalized music?</h3>
-            <h4>Start listening what you feel</h4>
+            <h4>Start listening what you see</h4>
             <button class="main-home-button">
                 <a style="color:#000000; text-decoration:none" href ="{% url 'spotify-auth' %}">Launch Now </a>
             </button>
+
+            <form method="POST">
+                {% csrf_token %}
+                <input type="file" name="image" id="image" required>
+
+                <div class="p-t-10">
+                    <input type="submit" value="Submit">
+                </div>
+            </form>
         </div>
     </div>
 {% endblock %}
