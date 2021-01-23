@@ -109,7 +109,7 @@ def get_emotion_from_url(url, numResults):
 
     # Analyze with Algorithmia's emotion recognition algorithm
     algo = client.algo('deeplearning/EmotionRecognitionCNNMBP/0.1.2')
-    algo.set_options(timeout=300) # optional
+    algo.set_options(timeout=5) # optional
     print("Analyzing")
     result = algo.pipe(input).result
 
