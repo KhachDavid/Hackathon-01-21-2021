@@ -6,14 +6,17 @@ import os
 import nltk
 from colorthief import ColorThief
 from nltk.stem import WordNetLemmatizer
-
+# Emotion analysis
 import Algorithmia
+# .env API key storage
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
 
 #nltk.download('all') 
 
 client_id = ''
 client_secret = ''
-ALGORITHMIA_CLIENT_KEY = ""
+ALGORITHMIA_CLIENT_KEY = os.getenv("ALGORITHMIA_CLIENT_KEY")
 
 
 def get_keywords_from_url(url, num_keywords):
