@@ -144,7 +144,6 @@ def callback(request):
     return render(request, "main/spotify.html", context)
 
 
-"""
 def update_the_song(request):
     random_track = ''
     if request.method == 'POST':
@@ -180,4 +179,3 @@ def update_the_song(request):
             json.dumps({"nothing to see": "this isn't happening"}),
             content_type="application/json"
         )
-"""
