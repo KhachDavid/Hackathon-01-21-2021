@@ -1,3 +1,5 @@
 .env
 .vscode
 __pycache__/keywords.cpython-39.pyc
+.png
+.jpg
