@@ -4,7 +4,8 @@ IMAGE1 = "https://images.theconversation.com/files/304963/original/file-20191203
 RYAN_IMAGE = "https://avatars.githubusercontent.com/u/64053382?s=460&u=ca069a45b4faca8c3e5da16867f05d9aa46047d1&v=4"
 
 def main():
-    test_get_emotion("IMAGE1")
+    test_get_emotion_from_image("sad_tank.jpg")
+    #test_get_emotion_from_url("IMAGE1")
     #test_get_keywords_from_image()
     #test_get_keywords_from_url()
 
@@ -15,6 +16,7 @@ def test_get_keywords_from_image():
     print()
     print(keywords.lemmatize(dog_keywords))
     print(keywords.get_dominant_color('dog.jpg'))
+    print("Done!")
 
 
 def test_get_keywords_from_url():
@@ -23,11 +25,17 @@ def test_get_keywords_from_url():
     print()
     print(keywords.lemmatize(megamind_keywords))
     print(keywords.get_dominant_color('megamind.jpeg'))
+    print("Done!")
 
 
-def test_get_emotion(image):
+def test_get_emotion_from_url(image):
     emotions = keywords.get_emotion_from_url(image, 10)
     print("List: " + emotions)
+    print("Done!")
 
+def test_get_emotion_from_image(image):
+    print("Testing get_emotion_from_image...")
+    print(keywords.get_emotion_from_image(image, 5))
+    print("Done!")
 
 main()

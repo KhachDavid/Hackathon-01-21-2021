@@ -3,6 +3,7 @@
 
 import requests
 import os
+import base64
 import nltk
 from colorthief import ColorThief
 from nltk.stem import WordNetLemmatizer
@@ -96,7 +97,6 @@ def get_emotion_from_url(url, numResults):
 
     url = url of image
     numResults = number of emotions to return
-    
     '''
     # Algorithmia client
     client = Algorithmia.client(ALGORITHMIA_CLIENT_KEY)
@@ -110,8 +110,20 @@ def get_emotion_from_url(url, numResults):
     # Analyze with Algorithmia's emotion recognition algorithm
     algo = client.algo('deeplearning/EmotionRecognitionCNNMBP/0.1.2')
     algo.set_options(timeout=5) # optional
-    print("Analyzing")
     result = algo.pipe(input).result
-
-    print("Done!")
     return result.get("results")
+
+def get_emotion_from_image(image, numResults):
+    '''
+    Determines the 'emotion' of a given image.
+
+    image = path to a local image
+    numResults = number of emotions to return
+    '''
+    # Encode local image using base64 encoding
+    with open(image, "rb") as img_file:
+        img_string = base64.b64encode(img_file.read())
+    b64_encoded_string = img_string.decode("utf-8")
+    # Pass encoded image as url to algorithm
+    img_url = "data:image/png;base64," + b64_encoded_string
+    return get_emotion_from_url(img_url, numResults)
