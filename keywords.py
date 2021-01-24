@@ -97,6 +97,8 @@ def get_emotion_from_url(url, numResults):
 
     url = url of image
     numResults = number of emotions to return
+    
+    API: https://algorithmia.com/algorithms/deeplearning/EmotionRecognitionCNNMBP
     '''
     # Algorithmia client
     client = Algorithmia.client(ALGORITHMIA_CLIENT_KEY)
