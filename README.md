@@ -20,21 +20,31 @@ Libraries: text2emotion, scipy, numpy, everypixel
 You can freely use the Client ID and the Client Secret values. We chose to hardcode them to make it simpler.
 
 On local machine, go to directory where you want to work and clone Moodify repository:
-```$ git clone https://github.com/KhachDavid/Hackathon-01-21-2021.git```
+```
+$ git clone https://github.com/KhachDavid/Hackathon-01-21-2021.git
+```
 
 Create a virtual environment in the directory:
-```$ virtualenv env```
+```
+$ virtualenv env
+```
 
 Activate virtual environment:
-```$ source env/bin/activate```
+```
+$ source env/bin/activate
+```
 
 Install dependencies:
-```$ pip install -r requirements.txt```
+```
+$ pip install -r requirements.txt
+```
 
 Run the program
-```$ py -m manage.py runserver 5000```
+```
+$ py -m manage.py runserver 5000
+```
 
 # Demo
-[Link][1]
+[Link]
 ⋮
 [1]: https://www.youtube.com/watch?v=VjAe_MTgmUs&feature=youtu.be
