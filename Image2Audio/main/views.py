@@ -3,7 +3,6 @@ from image.forms import NewImageForm
 from image.models import NewImage
 from spotify.SpotifyAPI import SpotifyAPI, embedify
 import requests, random
-from .keywords import get_keywords_from_image, get_emotion_from_url
 
 ClientID = '86e250ea3ec64541809ce9c138550641'
 ClientSecret = 'dcc696c7c934482a9d7f47d03a9a841a'

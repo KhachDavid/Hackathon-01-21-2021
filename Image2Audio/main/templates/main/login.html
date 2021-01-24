@@ -6,17 +6,32 @@
 {% block content %}
     
 <section>
+    <div class="banner">
+        <div class="blocks"></div>
+    </div>
+
     <div class="box">
         <div class="form">
-            <h2>Login</h2>
-            
-                <!--<i class="fa fa-user icon"></i>-->
-            <a href="{% url 'spotify-auth' %}"><input type="submit" placeholder="Home"></a>                     
-            
+                    <h2>Welcome to Image2Audio!</h2>
+                    <label class="Remember credentials"></label>
+                    <div class="inputBox">
+                        <a href ="{% url 'spotify-auth' %}"><input type="submit" placeholder="LAUNCH NOW"></a>
+                    </div>                            
             <p>Need an <a href="https://www.spotify.com/" target="_blank">Account</a>?</p>
         </div>
     </div>
 </section>
 
+<script>
+    const banner = document.getElementsByClassName("banner")[0];
+    const blocks = document.getElementsByClassName("blocks");
+
+    for (var i = 1; i < 400; i++) {
+        banner.innerHTML += "<div class='blocks'></div>";
+        const duration = Math.random() * 5;
+        blocks[i].style.animationDuration = 2+duration+'s';
+        blocks[i].style.animationDelay = duration+'s';
+    }
+</script>
 
 {% endblock %}

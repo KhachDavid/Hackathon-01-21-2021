@@ -18,11 +18,7 @@
         <div class="song-selection-box">
             <!-- SEARCH CONTAINER -->
             <div class="search-wrapper">
-                <div class="search-container">
-                    <input type="search" name="input-search" id="input-search" placeholder="Add keywords">
-                    <button type="button" id="btn-search">Go!</button>
-                    Temp, for testing keyword search
-                </div>
+
                 <div class="choose-file-container">
                     <!--<input type="file" name="input-img" id="input-img" hidden="hidden"/>
                     <button type="button" name="btn-input-img" id="btn-input-img">CHOOSE A FILE</button>
@@ -42,35 +38,15 @@
 
         
         <!-- RESULTS SEARCH -->
-        <div class="container-results" id="container-results" style="display:none"> 
+        <div class="container-results" id="container-results"> 
             <div class="player-container">
                 <img id="track_image">
-                <p id="music-icon"><i class="fa fa-music" aria-hidden="true"></i>Play What You See || See What You Play</p>
+
             
-                <div class="player-left">                    
-                    <img id="track_image">
-                    <div class="volume">
-                        <p id="volume_show">90</p>
-                        <i class="fa fa-volume-up" aria-hidden="true" id="volume-icon" onclick="mute_sound()"></i>
-                        <input type="range" min="0" max="100" value="90" onchange="volume_change()">
-                    </div>
-                </div>
-
-                <div class="player-right">
-                    <div class="show_song_num">
-                        <p id="curr_song_num">1</p>
-                        <p>/</p>
-                        <p id="total_songs">10</p>
-                    </div>
-
             <div class="container-results" id="container-results" > 
-                    <p id="title">title.mp3</p>
-                    <p id="artist">artist name</p>
-                    <iframe src={{list_of_playlists}} class="Play" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-                    <div class="play-duration">
-                        <input type="range" min="0" max="100" value="0" id="duration_slider" onchange="change_duration()">
-                    </div>
-                    <button id="auto">Autoplay <i class="fa fa-sync-alt" aria-hidden="true"></i></button>
+                    {% if bool %}
+                        <iframe src={{list_of_playlists}} class="Play" width="600" height="600" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                    {% endif %}
                 </div>
             </div>
         </div>

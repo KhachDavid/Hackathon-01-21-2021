@@ -3,7 +3,7 @@ from .SpotifyAPI import SpotifyAPI, embedify
 import json, requests, random
 from image.forms import NewImageForm
 from image.models import NewImage
-from main.keywords import get_keywords_from_image, get_emotion_from_url, get_emotion_from_image
+from main.keywords import get_keywords_from_image
 import text2emotion as te
 from collections import OrderedDict
 
@@ -60,95 +60,16 @@ def callback(request):
     # Use the access token to access Spotify API
     authorization_header = {"Authorization": "Bearer {}".format(access_token)}
 
-    # Get profile data
-    user_profile_api_endpoint = "{}/me".format(SPOTIFY_API_URL)
-    profile_response = requests.get(user_profile_api_endpoint, headers=authorization_header)
-    try:
-        profile_data = json.loads(profile_response.text)
-    except json.decoder.JSONDecodeError:
-        pass
-    
-    # Get user playlist data
-    playlist_api_endpoint = "{}/playlists".format(profile_data["href"])
-    playlists_response = requests.get(playlist_api_endpoint, headers=authorization_header)
-    try:
-        playlist_data = json.loads(playlists_response.text)
-    except json.decoder.JSONDecodeError:
-        context= {
-            'prof_pic': "/static/musicplayer/wine.png",
-            'random_track': 'https://open.spotify.com/embed/track/2g8HN35AnVGIk7B8yMucww',
-            'users_name': 'Dashboard',
-        }
-        return render(request, "main/spotify.html", context)
-
-    # Combine profile and playlist data to display
-    display_arr = [profile_data] + playlist_data["items"]
-
-    # Get tracks
-    list_of_songs = []
-    flag = False
-    while not flag:
-        try:
-            for n in range(1, len(display_arr)):
-                playlist_id = display_arr[n]['id']
-                tracks_response = requests.get(f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks",
-                                            headers=authorization_header)
-                try:
-                    tracks_data = json.loads(tracks_response.text)
-                except json.decoder.JSONDecodeError:
-                    pass
-                list_of_songs.append(tracks_data)
-            flag = True
-        except json.decoder.JSONDecodeError:
-            pass
-
-    # Profile Picture and Name
-    users_name = display_arr[0]['display_name']
-    try:
-        prof_pic = display_arr[0]['images'][0]['url']
-    except:
-        prof_pic = "/static/musicplayer/wine.png"
-
-    # Get Audio Features
-    tracks = []
-    for i in range(len(list_of_songs)):
-        for track in list_of_songs[i]['items']:        
-            try:
-                # print(track['track']['id'])
-                tracks.append(track['track']['id'])
-            except TypeError:
-                pass
-
-    print(f"There are {len(tracks)} songs")
-    audio_features = []
-    len_of_songs = len(tracks)
-
-    # Obtain Audio Features For the Songs
-    if len(tracks) <= 100:
-        audio_features = client.get_audio_features(auth_header=authorization_header, track_ids=tracks)
-    else:
-        while (len_of_songs > 0):
-            flag = False
-            while not flag:
-                try:
-                    audio_features_index = client.get_audio_features(auth_header=authorization_header, track_ids=tracks[len_of_songs - 100:] if len_of_songs > 100 else tracks[:len_of_songs])
-                    audio_features.append(audio_features_index)
-                    len_of_songs = len_of_songs - 100
-                    flag = True
-                except json.decoder.JSONDecodeError:
-                    pass
-
     # Obtain Top Artists
     # artists = client.get_users_top_artists(num_entities=10)
     # audio_features['audio_features'][0]['danceability']
     # audio_features['audio_features'][0]['energy']
     request.session['authorization_header'] = authorization_header
-    request.session['audio_features'] = audio_features
+
     image_form = NewImageForm()
     context= {
-        'prof_pic': prof_pic,
-        'users_name': users_name,
-        'image_form': image_form
+        'image_form': image_form,
+        'bool': False
     }
     return render(request, "main/home.html", context)
 
@@ -197,10 +118,12 @@ def update_the_song(request):
             user_tracks = client.add_and_get_user_tracks(authorization_header, cluster)
             audio_feat = client.standardize_audio_features(user_tracks)
             playlist_tracks = client.select_tracks(audio_feat, float(mood))
-            spotify_play = client.create_playlist(authorization_header, playlist_tracks, 'Image Playlist')
+            spotify_play = client.create_playlist(authorization_header, playlist_tracks, image.name)
             spotify_play = embedify(spotify_play)
+
             context = {
                 'list_of_playlists': spotify_play,
+                'bool': True
             }
             # print(playlist_link)
             return render(request, 'main/home.html', context)
