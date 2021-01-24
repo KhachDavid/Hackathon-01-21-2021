@@ -21,7 +21,7 @@ Libraries: text2emotion, scipy, numpy, everypixel
 
 You can freely use the Client ID and the Client Secret values. We chose to hardcode them to make it simpler.
 
-On local machine, go to directory where you want to work and clone Moodify repository:
+On local machine, go to directory where you want to work and clone Image2Audio repository:
 ```
 $ git clone https://github.com/KhachDavid/Hackathon-01-21-2021.git
 ```
