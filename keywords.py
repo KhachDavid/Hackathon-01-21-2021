@@ -15,8 +15,8 @@ load_dotenv(find_dotenv())
 
 #nltk.download('all') 
 
-client_id = ''
-client_secret = ''
+EVERYPIXEL_KEY = os.getenv("EVERYPIXEL_KEY")
+EVERPIXEL_SECRET = os.getenv("EVERPIXEL_SECRET")
 ALGORITHMIA_CLIENT_KEY = os.getenv("ALGORITHMIA_CLIENT_KEY")
 
 
@@ -30,7 +30,7 @@ def get_keywords_from_url(url, num_keywords):
     '''
 
     params = {'url': url, 'num_keywords': num_keywords}
-    info = requests.get('https://api.everypixel.com/v1/keywords', params=params, auth=(client_id, client_secret)).json()
+    info = requests.get('https://api.everypixel.com/v1/keywords', params=params, auth=(EVERYPIXEL_KEY, EVERPIXEL_SECRET)).json()
 
     keywords = []
     words = info['keywords']
@@ -50,7 +50,7 @@ def get_keywords_from_image(image_name, num_keywords):
 
     with open(image_name,'rb') as image:
         data = {'data': image}
-        info = requests.post('https://api.everypixel.com/v1/keywords', files=data, auth=(client_id, client_secret)).json()
+        info = requests.post('https://api.everypixel.com/v1/keywords', files=data, auth=(EVERYPIXEL_KEY, EVERPIXEL_SECRET)).json()
 
     keywords = []
     print(info)
