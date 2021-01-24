@@ -25,4 +25,5 @@ urlpatterns = [
     path('home/', main_views.home, name='home'), 
     path('auth/', include('spotify.urls')),
     path('callback/', spotify_views.callback, name='callback'),
+    path('update_the_song/', spotify_views.update_the_song, name='update_the_song'),
 ]

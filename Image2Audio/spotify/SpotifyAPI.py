@@ -6,7 +6,11 @@ from .models import Song
 from .quick_sort import quick_sort
 from .merge_sort import merge_sort
 import random
+from .Track import Track
 from .Song import Song_by
+from random import shuffle
+import numpy as np
+from scipy import stats
 
 def embedify(random_track):
     """
@@ -33,7 +37,7 @@ class SpotifyAPI(object):
     API_VERSION = "v1"
     SPOTIFY_API_URL = "{}/{}".format(SPOTIFY_API_BASE_URL, API_VERSION)
 
-    scope = "playlist-modify-public playlist-modify-private user-top-read user-follow-modify"
+    scope = "streaming user-follow-read user-read-private playlist-modify-public playlist-modify-private user-top-read user-follow-modify"
     state = ""
     show_dialog_bool = True
     show_dialog_str = str(show_dialog_bool).lower()
@@ -259,7 +263,7 @@ class SpotifyAPI(object):
         auth_query_parameters = {
             "response_type": "code",
             "redirect_uri": "http://127.0.0.1:5000/callback",
-            "scope": "playlist-modify-public playlist-modify-private user-top-read user-follow-read user-follow-modify",
+            "scope": "streaming user-follow-read user-read-private playlist-modify-public playlist-modify-private user-top-read user-follow-modify",
             "state": "",
             "show_dialog": str(self.get_show_dialog()).lower(),
             "client_id": self.client_id
@@ -310,6 +314,174 @@ class SpotifyAPI(object):
 
         return artists
 
+    def get_related_artists(self, auth_header, top_artists):
+        """ 
+        Return list of related artists using users number one top artist 
+        @Credit: Mahnoor Shafi - https://github.com/mahnoorshafi/Moodify/blob/master/mood.py
+        """
+
+        new_artists = []
+
+        for artist_id in top_artists[:1]:
+            request = f'{self.SPOTIFY_API_URL}/artists/{artist_id}/related-artists'
+            related_artists_data = requests.get(request, headers=auth_header).json()
+            # related_artists_data = get_spotify_data(request, auth_header)
+            related_artists = related_artists_data['artists']
+
+            for related_artist in related_artists:
+                if related_artist['id'] not in new_artists:
+                    new_artists.append(related_artist['id'])
+
+        artists = set(top_artists + new_artists)
+
+        return list(artists)
+
+    def get_top_tracks(self, auth_header, artists):
+        """ Return list containing 10 track ids per artist.
+        Add tracks to Track model as well as to UserTrack model
+        to associate them with the user. """
+
+        top_tracks = []
+
+        for artist_id in artists:
+            request = f'{self.SPOTIFY_API_URL}/artists/{artist_id}/top-tracks?country=US'
+            track_data = requests.get(request, headers=auth_header).json()
+            # track_data = get_spotify_data(request, auth_header)
+            tracks = track_data['tracks']
+
+            for track in tracks:
+                # track_uri = track['uri']
+                track_id = track['id']
+                # track_name = track['name']
+
+                if track['id'] not in top_tracks:
+                    top_tracks.append(track['id'])
+            
+
+        return top_tracks
+    
+    def cluster_ids(self, top_tracks, n = 100):
+        """ Return list of track ids clustered in groups of 100 """
+
+        clustered_tracks = []
+        for i in range(0, len(top_tracks), n):
+            clustered_tracks.append(top_tracks[i:i + n])
+
+        return clustered_tracks
+
+    def select_tracks(self, user_audio_features, mood):
+        """ Return set of spotify track uri's to add to playlist based on mood. """
+
+        selected_tracks = []
+
+        for track, feature in user_audio_features.items():
+            if mood <= 0.10:
+                if (0 <= feature['valence'] <= (mood + 0.05)) and (feature['energy'] <= (mood + 0.1)) and (feature['danceability'] <= (mood + 0.2)):
+                    selected_tracks.append(track)
+            if mood <= 0.25:
+                if ((mood - 0.05) <= feature['valence'] <= (mood + 0.05)) and (feature['energy'] <= (mood + 0.1)) and (feature['danceability'] <= (mood + 0.2)):
+                    selected_tracks.append(track)
+            if mood <= 0.50:
+                if ((mood - 0.05) <= feature['valence'] <= (mood + 0.05)) and (feature['energy'] <= (mood + 0.1)) and (feature['danceability'] <= mood):
+                    selected_tracks.append(track)
+            if mood <= 0.75:
+                if ((mood - 0.05) <= feature['valence'] <= (mood + 0.05)) and (feature['energy'] >= (mood - 0.1)) and (feature['danceability'] >= mood):
+                    selected_tracks.append(track)
+            if mood <= 0.90:
+                if ((mood - 0.05) <= feature['valence'] <= (mood + 0.05)) and (feature['energy'] >= (mood - 0.2)) and (feature['danceability'] >= (mood - 0.3)):
+                    selected_tracks.append(track)
+            if mood <= 1.00:
+                if ((mood - 0.1) <= feature['valence'] <= 1) and (feature['energy'] >= (mood - 0.3)) and (feature['danceability'] >= (mood - 0.4)):
+                    selected_tracks.append(track)
+
+        shuffle(selected_tracks)
+        playlist_tracks = selected_tracks[:36]
+        
+        return set(playlist_tracks)
+
+    def add_and_get_user_tracks(self,auth_header, clustered_tracks):
+        """ Get three audio features for tracks: danceability, energy, valence.
+        Add audio features to Track model and delete those that don't have audio
+        features. Return list of tracks associated with user.  """
+
+        track_audio_features = []
+
+        for track_ids in clustered_tracks:
+            ids = '%2C'.join(track_ids)
+            request = f'{self.SPOTIFY_API_URL}/audio-features?ids={ids}'
+            audio_features_data = requests.get(request, headers=auth_header).json()
+            # audio_features_data = get_spotify_data(request, auth_header)
+            audio_features = audio_features_data['audio_features']
+            track_audio_features.append(audio_features)
+
+        lst_of_tracks = []
+        for tracks in track_audio_features:
+            for track in tracks:
+                if track:
+                    track_uri = track['uri']
+                    track_valence = track['valence']
+                    track_danceability = track['danceability']
+                    track_energy = track['energy']
+                    lst_of_tracks.append(Track(track_uri, track_valence, track_energy, track_danceability))
+        return lst_of_tracks
+
+    def standardize_audio_features(self, user_tracks):
+        """ Return dictionary of standardized audio features. 
+        Dict = Track Uri: {Audio Feature: Cumulative Distribution} """
+
+
+        user_tracks_valence = list(map(lambda track: track.get_valence(), user_tracks))
+        valence_array = np.array(user_tracks_valence)
+        valence_zscores = stats.zscore(valence_array)
+        valence_zscores = valence_zscores.astype(dtype=float).tolist()
+        valence_cdf = stats.norm.cdf(valence_zscores)
+
+        user_tracks_energy = list(map(lambda track: track.get_energy(), user_tracks))
+        energy_array = np.array(user_tracks_energy)
+        energy_zscores = stats.zscore(energy_array)
+        energy_zscores = energy_zscores.astype(dtype=float).tolist()
+        energy_cdf = stats.norm.cdf(energy_zscores)
+
+        user_tracks_danceability = list(map(lambda track: track.get_danceability(), user_tracks))
+        danceability_array = np.array(user_tracks_danceability)
+        danceability_zscores = stats.zscore(danceability_array)
+        danceability_zscores = danceability_zscores.astype(dtype=float).tolist()
+        danceability_cdf = stats.norm.cdf(danceability_zscores)
+
+        user_audio_features = {}
+
+        for i, user_track in enumerate(user_tracks):
+            user_audio_features[user_track.get_uri()] = {'valence': valence_cdf[i], 
+                                            'energy': energy_cdf[i], 
+                                            'danceability': danceability_cdf[i]}
+        
+        return user_audio_features
+
+
+    def create_playlist(self, auth_header, playlist_tracks, playlist_name):
+        """ Create playlist and add tracks to playlist. """
+
+        request = f'{self.SPOTIFY_API_URL}/me'
+        user_info_data = requests.get(request, headers=auth_header).json()
+        user_id = user_info_data['id']
+
+        name = f'{playlist_name}'
+
+        payload = { 
+            'name' : name,
+            'description': 'Mood generated playlist'
+            }
+        playlist_request = f'{self.SPOTIFY_API_URL}/users/{user_id}/playlists'
+        playlist_data = requests.post(playlist_request, data = json.dumps(payload), headers =auth_header).json()
+        playlist_id = playlist_data['id']   
+
+        track_uris = '%2C'.join(playlist_tracks)
+        add_tracks = f'{self.SPOTIFY_API_URL}/playlists/{playlist_id}/tracks?uris={track_uris}'
+        tracks_added = requests.post(add_tracks, headers=auth_header).json()
+        # tracks_added = post_spotify_data(add_tracks, auth_header)
+
+        return playlist_data['external_urls']['spotify']
+
     def get_audio_features(self, auth_header, track_ids):  # track_ids = list of track ids
         """
         This function returns a JSON object with all the audio features of the given list of track ids.
@@ -350,19 +522,7 @@ class SpotifyAPI(object):
                 merge_sort(self.tracks, 0, len(self.tracks) - 1, song_element)
         # If low, return a random track below the 25th percentile
         if high_or_low == 'low':
-            if len(self.tracks) / 4 == 0:
-                n = random.randint(0, 1)
-                return self.tracks[n].embed_by_id()
-            n = random.randint(0, int(len(self.tracks) / 4))
-            while self.tracks[n].get_seen() and self.counter != len(self.tracks):   
-                self.counter += 1
-                n = random.randint(0, int(len(self.tracks) / 4))
-            class_method = getattr(Song_by, "get_" + song_element)
-            print(song_element + " is " + str(class_method(self.tracks[n])))
-            song_to_return = self.tracks[n]
-            self.tracks[n].set_seen_true()
-            print(song_to_return.get_seen())
-            return song_to_return.embed_by_id()
+            return self.tracks[:5]
         
         # If high, return a random track above the 75th percentile
         if high_or_low == 'high':

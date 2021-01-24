@@ -104,7 +104,7 @@ header .header-container {
 }
 
 #header-logo {
-    background: url("../img/spotify_icon_logo.png");
+    background: url("images/spotify_icon_logo.png");
     background-size: contain;
     background-repeat: no-repeat;
     height: 35px;

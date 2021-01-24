@@ -3,17 +3,13 @@
 
 import requests
 import os
-import nltk
 from colorthief import ColorThief
-from nltk.stem import WordNetLemmatizer
-
+import base64
 import Algorithmia
 
-#nltk.download('all') 
-
-client_id = ''
-client_secret = ''
-ALGORITHMIA_CLIENT_KEY = ""
+client_id = 'J93dlmnXh0XusKixhnpz4K3z'
+client_secret = 'CT6AhZDFDkn5I18e072dYTVTVB2Plhpw9EzpPPUB55eHucIT'
+ALGORITHMIA_CLIENT_KEY = "simSTcz9PQkxerlxUo9okoc7SPQ1"
 
 
 def get_keywords_from_url(url, num_keywords):
@@ -35,7 +31,7 @@ def get_keywords_from_url(url, num_keywords):
         keywords.append(keyword)
     return keywords
 
-def get_keywords_from_image(image_name, num_keywords):
+def get_keywords_from_image(image_name):
     '''
     Returns a list of keywords for a given image
     image_name - the path of the image that is stored within the project folder
@@ -49,31 +45,12 @@ def get_keywords_from_image(image_name, num_keywords):
         info = requests.post('https://api.everypixel.com/v1/keywords', files=data, auth=(client_id, client_secret)).json()
 
     keywords = []
-    print(info)
+    # print(info)
     words = info['keywords']
     for word in words:
         keyword = word['keyword']
         keywords.append(keyword)
     return keywords
-
-
-def lemmatize(all_keywords):
-    '''
-    Given a set of keywords, this function lemmatizes each word
-    all_keywords (list of strings) - the keywords
-
-    Orignal source - https://www.geeksforgeeks.org/python-lemmatization-with-nltk/
-    '''
-
-    lemmatized_words = []
-    lemmatizer = WordNetLemmatizer()
-
-    for word in all_keywords:
-        temp = lemmatizer.lemmatize(word)
-        if temp not in lemmatized_words:
-            lemmatized_words.append(temp)
-
-    return lemmatized_words
 
 def get_dominant_color(image):
     '''
@@ -112,3 +89,17 @@ def get_emotion_from_url(url, numResults):
 
     print("Done!")
     return result.get("results")
+
+def get_emotion_from_image(image, numResults):
+    '''
+    Determines the 'emotion' of a given image.
+    image = path to a local image
+    numResults = number of emotions to return
+    '''
+    # Encode local image using base64 encoding
+    with open(image, "rb") as img_file:
+        img_string = base64.b64encode(img_file.read())
+    b64_encoded_string = img_string.decode("utf-8")
+    # Pass encoded image as url to algorithm
+    img_url = "data:image/png;base64," + b64_encoded_string
+    return get_emotion_from_url(img_url, numResults)

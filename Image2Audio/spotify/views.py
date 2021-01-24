@@ -1,6 +1,12 @@
 from django.shortcuts import render, redirect, HttpResponse
-from .SpotifyAPI import SpotifyAPI
+from .SpotifyAPI import SpotifyAPI, embedify
 import json, requests, random
+from image.forms import NewImageForm
+from image.models import NewImage
+from main.keywords import get_keywords_from_image, get_emotion_from_url, get_emotion_from_image
+import text2emotion as te
+from collections import OrderedDict
+
 
 ClientID = '86e250ea3ec64541809ce9c138550641'
 ClientSecret = 'dcc696c7c934482a9d7f47d03a9a841a'
@@ -18,6 +24,7 @@ def auth(request):
     return redirect(client.generate_auth_url())
 
 def callback(request):
+
     client.set_show_dialog_false()
     client.empty_the_tracks()
 
@@ -30,6 +37,7 @@ def callback(request):
         'client_id': ClientID,
         'client_secret': ClientSecret,
     }
+
     post_request = requests.post(client.get_token_url(), data=code_payload)
         
     # Tokens are Returned to Application
@@ -71,7 +79,7 @@ def callback(request):
             'random_track': 'https://open.spotify.com/embed/track/2g8HN35AnVGIk7B8yMucww',
             'users_name': 'Dashboard',
         }
-        return render(request, "spotify/main.html", context)
+        return render(request, "main/spotify.html", context)
 
     # Combine profile and playlist data to display
     display_arr = [profile_data] + playlist_data["items"]
@@ -131,49 +139,71 @@ def callback(request):
                     pass
 
     # Obtain Top Artists
-    artists = client.get_users_top_artists(auth_header=authorization_header, num_entities=10)
-
+    # artists = client.get_users_top_artists(num_entities=10)
     # audio_features['audio_features'][0]['danceability']
     # audio_features['audio_features'][0]['energy']
+    request.session['authorization_header'] = authorization_header
     request.session['audio_features'] = audio_features
+    image_form = NewImageForm()
     context= {
         'prof_pic': prof_pic,
         'users_name': users_name,
-        'artists': artists,
+        'image_form': image_form
     }
-    return render(request, "main/spotify.html", context)
+    return render(request, "main/home.html", context)
 
 
 def update_the_song(request):
-    random_track = ''
-    if request.method == 'POST':
-        sad_or_happy = request.POST.get('sad_or_happy')
-        dance_or_no = request.POST.get('dance_or_no')
-        tired_or_not = request.POST.get('tired_or_not')
-        alone_or_not = request.POST.get('alone_or_not')
-        request.session['sad_or_happy'] = sad_or_happy
-        request.session['alone_or_not'] = alone_or_not
-        request.session['dance_or_no'] = dance_or_no
-        request.session['tired_or_not'] = tired_or_not
+    #if request.method == 'POST':
+     #   sad_or_happy = request.POST.get('sad_or_happy')
+      #  dance_or_no = request.POST.get('dance_or_no')
+       # tired_or_not = request.POST.get('tired_or_not')
+      #  alone_or_not = request.POST.get('alone_or_not')
+     #   request.session['sad_or_happy'] = sad_or_happy
+    #    request.session['alone_or_not'] = alone_or_not
+    #    request.session['dance_or_no'] = dance_or_no
+    #    request.session['tired_or_not'] = tired_or_not
     
-        response_data = {}
-        audio_features = request.session.get('audio_features')
-        # print(f"{sad_or_happy}: sad_or_happy")
-        if sad_or_happy is not None:
-            # This is a basic logic implementation to get the website working
-            if 'yes' in dance_or_no:
-                random_track = client.get_high_danceability_songs(audio_features)
-            elif 'sad' in sad_or_happy:
-                random_track = client.get_low_valence_songs(audio_features)
-            elif 'happy' in sad_or_happy:
-                random_track = client.get_high_valence_songs(audio_features)
-            sad_or_happy = None
+    if request.method == 'POST':
+        authorization_header = request.session.get('authorization_header')
+        print(1)
+        image_form = NewImageForm(request.POST, request.FILES)
+        if image_form.is_valid():
+            image = image_form.cleaned_data['image']
+            image_form.save()
+            # p = NewImage.objects.get(image=image_form.cleaned_data['image'])
+            keywords = get_keywords_from_image(f"images/{image.name}")
+            list_of_playlists = []
+            print(keywords)
             
-        response_data['random_track'] = random_track
-        response_data['flag'] = False
-        return HttpResponse(
-            json.dumps(response_data),
-            content_type="application/json")
+            keywstr = ""
+            for element in keywords:
+                keywstr += element + " "
+
+            top_artists = client.get_users_top_artists(authorization_header, 50)
+            artists = client.get_related_artists(authorization_header, top_artists)
+            tracks = client.get_top_tracks(authorization_header, artists)
+            cluster = client.cluster_ids(tracks)
+            
+            # Get the mood
+            emotion_dump1 = te.get_emotion(keywstr)
+            print(emotion_dump1)
+
+            one = max(emotion_dump1['Happy'], emotion_dump1['Happy'])
+            two = max(emotion_dump1['Angry'], emotion_dump1['Surprise'], emotion_dump1['Fear'])
+
+            mood = (one + two) / 2
+
+            user_tracks = client.add_and_get_user_tracks(authorization_header, cluster)
+            audio_feat = client.standardize_audio_features(user_tracks)
+            playlist_tracks = client.select_tracks(audio_feat, float(mood))
+            spotify_play = client.create_playlist(authorization_header, playlist_tracks, 'Image Playlist')
+            spotify_play = embedify(spotify_play)
+            context = {
+                'list_of_playlists': spotify_play,
+            }
+            # print(playlist_link)
+            return render(request, 'main/home.html', context)
     else:
         return HttpResponse(
             json.dumps({"nothing to see": "this isn't happening"}),

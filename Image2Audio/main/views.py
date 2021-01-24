@@ -3,6 +3,7 @@ from image.forms import NewImageForm
 from image.models import NewImage
 from spotify.SpotifyAPI import SpotifyAPI, embedify
 import requests, random
+from .keywords import get_keywords_from_image, get_emotion_from_url
 
 ClientID = '86e250ea3ec64541809ce9c138550641'
 ClientSecret = 'dcc696c7c934482a9d7f47d03a9a841a'
@@ -15,21 +16,31 @@ def home(request):
             image = image_form.cleaned_data['image']
             image_form.save()
             # p = NewImage.objects.get(image=image_form.cleaned_data['image'])
+            keywords = get_keywords_from_image(f"images/{image.name}")
             
-            # https://labs.everypixel.com/api/docs
-            client_id = 'J93dlmnXh0XusKixhnpz4K3z'
-            client_secret = 'CT6AhZDFDkn5I18e072dYTVTVB2Plhpw9EzpPPUB55eHucIT'
-            with open(f"images/{image.name}",'rb') as image:
-                data = {'data': image}
-                keywords = requests.post('https://api.everypixel.com/v1/keywords', files=data, auth=(client_id, client_secret)).json()
+            list_of_playlists = []
             
-            print(keywords['keywords'][0]['keyword'])
-            spotify_search = client.search(keywords['keywords'][0]['keyword'])
-            n = random.randint(0, len(spotify_search['playlists']['items']))
-            playlist_link = spotify_search['playlists']['items'][n]['external_urls']['spotify']
-            playlist_link = embedify(playlist_link)
+            for keyword in keywords:
+                spotify_search = client.search(keyword)
+
+                playlist_link = ""
+                try:
+                    playlist_link = spotify_search['playlists']['items'][0]['external_urls']['spotify']
+                    playlist_link = embedify(playlist_link)
+                    list_of_playlists.append(playlist_link)
+                except IndexError:
+                    pass
+                
+                # for item in spotify_search['playlists']['items']:
+                #    playlist_link = item['external_urls']['spotify']
+                #    playlist_link = embedify(playlist_link)
+                #    list_of_playlists.append(playlist_link)
+
+            # emotion_list = get_emotion_from_url(f"images/{image.name}", 3)
+            # print(emotion_list)
+
             context = {
-                'playlist_link': playlist_link
+                'list_of_playlists': list_of_playlists
             }
             print(playlist_link)
             return render(request, 'main/home.html', context)

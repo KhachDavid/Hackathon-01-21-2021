@@ -8,7 +8,7 @@
             <header>
                 <div class="header-wrapper">
                     <div class="header-container">
-                    <span id="header-text">Image2Audio - Powered By</span><div class="header-logo"></div>
+                    <span id="header-text">Image2Audio - Powered By<div class="header-logo"><img src="{% static 'main/spotify_icon_logo.png' %}"></div></span>
                 </div>
             </header>
 
@@ -16,7 +16,6 @@
         <!--  SONG SELECTION BOX  -->
 
         <div class="song-selection-box">
-
             <!-- SEARCH CONTAINER -->
             <div class="search-wrapper">
                 <div class="search-container">
@@ -28,24 +27,22 @@
                     <!--<input type="file" name="input-img" id="input-img" hidden="hidden"/>
                     <button type="button" name="btn-input-img" id="btn-input-img">CHOOSE A FILE</button>
                     <span id="text-input-img">No file chosen yet.</span>-->
-
-                    <form method="POST" enctype="multipart/form-data">
+                    <form method="POST" action="{% url 'update_the_song' %}" id="image_form" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{image_form}}
                         <button type="submit" id="btn-search">Go!</button>
                     </form>
-
                 </div>
                 <div class="upload-container"> <!-- upload will send image for processing to render playlist/song-->
                     <input type="file" name="input-img" id="input-img" hidden="hidden"/>
-                    <button type="button" name="btn-upload" id="btn-upload" onclick="showResults()">PLAY MUSIC</button>
+                    <button type="button" name="btn-upload" id="btn-upload" onclick="showResults()">PLAY MUSIC </button >
                 </div>
             </div>
         </div> <!-- END SONG SELECTION BOX -->
 
+        
         <!-- RESULTS SEARCH -->
-
-        <div class="container-results" id="container-results" style="display:none;"> 
+        <div class="container-results" id="container-results" style="display:none"> 
             <div class="player-container">
                 <img id="track_image">
                 <p id="music-icon"><i class="fa fa-music" aria-hidden="true"></i>Play What You See || See What You Play</p>
@@ -66,23 +63,15 @@
                         <p id="total_songs">10</p>
                     </div>
 
-            <div class="container-results" id="container-results"> 
+            <div class="container-results" id="container-results" > 
                     <p id="title">title.mp3</p>
                     <p id="artist">artist name</p>
-
-                    <div class="play-options">
-                        <button onclick="previous_song()" id="pre"><i class="fa fa-step-backward" aria-hidden="true"></i></button>
-                        <iframe src={{playlist_link}} class="Play" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-                        <button onclick="next_song()" id="next"><i class="fa fa-step-forward" aria-hidden="true"></i></button>
-                    </div>
-                    
+                    <iframe src={{list_of_playlists}} class="Play" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
                     <div class="play-duration">
                         <input type="range" min="0" max="100" value="0" id="duration_slider" onchange="change_duration()">
                     </div>
-                    <button id="auto" onclick="autoplay_switch()">Autoplay <i class="fa fa-sync-alt" aria-hidden="true"></i></button>
+                    <button id="auto">Autoplay <i class="fa fa-sync-alt" aria-hidden="true"></i></button>
                 </div>
             </div>
         </div>
-
-
 {% endblock %}
