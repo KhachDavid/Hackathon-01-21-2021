@@ -12,7 +12,9 @@ Once authorized, Image2Audio will give you an opportunity to generate a personal
 # Tech Stack
 
 Frontend: Javascript, Jinja
+
 Backend: Python, Django
+
 Libraries: text2emotion, scipy, numpy, everypixel
 
 # Setup Installation
