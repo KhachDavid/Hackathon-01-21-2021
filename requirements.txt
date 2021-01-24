@@ -1,1 +1,1 @@
-django, requests, Image
+django, requests, Image, text2emotion, Algorithmia, colorthief, pillow
