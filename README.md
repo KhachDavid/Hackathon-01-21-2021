@@ -33,3 +33,8 @@ Install dependencies:
 
 Run the program
 ```$ py -m manage.py runserver 5000```
+
+# Demo
+[Link][1]
+⋮
+[1]: https://www.youtube.com/watch?v=VjAe_MTgmUs&feature=youtu.be
