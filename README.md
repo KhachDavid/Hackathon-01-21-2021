@@ -9,6 +9,8 @@ py manage.py migrate
 
 Once authorized, Image2Audio will give you an opportunity to generate a personalized playlists based on a picture that you upload. When the playlist is created you can play it on our page or on your Spotify's playlist library. 
 
+This project won the 5th prize in BadgerHacks hackathon.
+
 # Tech Stack
 
 Frontend: Javascript, Jinja
