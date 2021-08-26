@@ -10,7 +10,7 @@ import Algorithmia
 
 client_id = 'J93dlmnXh0XusKixhnpz4K3z'
 client_secret = 'CT6AhZDFDkn5I18e072dYTVTVB2Plhpw9EzpPPUB55eHucIT'
-ALGORITHMIA_CLIENT_KEY = "simSTcz9PQkxerlxUo9okoc7SPQ1"
+ALGORITHMIA_CLIENT_KEY = "KEY"
 
 
 def get_keywords_from_image(image_name):
